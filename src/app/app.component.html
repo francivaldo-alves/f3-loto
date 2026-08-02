@@ -1,0 +1,84 @@
+<div class="app-shell">
+  
+  <!-- Componente de Cabeçalho e Abas -->
+  <app-header
+    [selectedGameId]="selectedGameId"
+    [loading]="loading"
+    (gameSelected)="onGameSelected($event)">
+  </app-header>
+
+  <main class="main-content">
+    
+    <!-- Alertas ou Erros -->
+    <div *ngIf="errorMessage" class="error-banner glass-panel">
+      ⚠️ {{ errorMessage }}
+    </div>
+
+    <!-- Visão Geral (Dashboard com as 10 loterias) -->
+    <ng-container *ngIf="selectedGameId === null">
+      <app-lottery-dashboard
+        [latestDraws]="latestDrawsMap"
+        (selectGame)="onGameSelected($event)">
+      </app-lottery-dashboard>
+    </ng-container>
+
+    <!-- Visão Detalhada de uma Loteria Selecionada -->
+    <ng-container *ngIf="selectedGameId !== null && selectedConfig">
+      
+      <!-- Banner com Gradiente e Nome do Jogo -->
+      <div class="game-hero-banner glass-panel" [style.background]="selectedConfig.gradient">
+        <div class="hero-content">
+          <div class="badge-large">{{ selectedConfig.badge }}</div>
+          <div>
+            <h2 class="hero-game-title">{{ selectedConfig.name }}</h2>
+            <p class="hero-game-desc">{{ selectedConfig.description }}</p>
+          </div>
+        </div>
+
+        <button class="btn-back" (click)="onGameSelected(null)">
+          ← Voltar para Todos os Jogos
+        </button>
+      </div>
+
+      <!-- Mapa de Calor e Frequências das Dezenas -->
+      <app-frequency-heatmap
+        [config]="selectedConfig"
+        [frequencies]="frequencies"
+        [totalDraws]="currentHistory.length"
+        [fixedNumbers]="fixedNumbers"
+        [excludedNumbers]="excludedNumbers"
+        [evenOddStats]="evenOddStats"
+        [selectedLimit]="sampleLimit"
+        (limitChange)="onSampleLimitChange($event)"
+        (toggleFixed)="onToggleFixed($event)"
+        (toggleExcluded)="onToggleExcluded($event)">
+      </app-frequency-heatmap>
+
+      <!-- Gerador Inteligente de Combinações -->
+      <app-smart-generator
+        [config]="selectedConfig"
+        [frequencies]="frequencies"
+        [fixedNumbers]="fixedNumbers"
+        [excludedNumbers]="excludedNumbers"
+        [generatedBets]="generatedBets"
+        (generate)="onGenerateBets($event)"
+        (exportBets)="showExportModal = true"
+        (removeFixed)="onRemoveFixed($event)"
+        (removeExcluded)="onRemoveExcluded($event)">
+      </app-smart-generator>
+
+      <!-- Modal de Exportação -->
+      <app-bet-exporter
+        *ngIf="showExportModal"
+        [config]="selectedConfig"
+        [bets]="generatedBets"
+        (close)="showExportModal = false">
+      </app-bet-exporter>
+
+    </ng-container>
+  </main>
+
+  <footer class="app-footer">
+    <p>SortLoto PRO • Sistema de Análise e Combinações de Loterias da Caixa • {{ currentHistory.length > 0 ? currentHistory.length + ' concursos analisados ao vivo' : '100% Atualizado' }}</p>
+  </footer>
+</div>

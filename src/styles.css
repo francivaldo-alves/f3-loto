@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap');
+
+:root {
+  --bg-dark: #0b0f19;
+  --bg-card: rgba(18, 26, 44, 0.75);
+  --bg-card-hover: rgba(28, 40, 64, 0.9);
+  --border-card: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(255, 255, 255, 0.16);
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+  
+  --accent-gold: #fbbf24;
+  --accent-gold-dark: #b45309;
+  --accent-emerald: #10b981;
+  --accent-purple: #d946ef;
+  --accent-blue: #3b82f6;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+
+  --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(ellipse at 15% 10%, rgba(32, 152, 105, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 15%, rgba(147, 0, 137, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 85%, rgba(38, 0, 133, 0.15) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Glassmorphism Card com Efeito de Luz Natural */
+.glass-panel {
+  background: linear-gradient(145deg, rgba(22, 32, 54, 0.75) 0%, rgba(14, 21, 37, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: var(--border-accent);
+}
+
+/* Bola da Loteria 3D Realista e Responsiva */
+.loto-ball {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #ffffff;
+  position: relative;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.1) 28%),
+              radial-gradient(circle at 50% 50%, var(--ball-color, #209869) 0%, var(--ball-dark-color, #064e3b) 100%);
+  box-shadow: inset -3px -4px 6px rgba(0, 0, 0, 0.5),
+              inset 2px 3px 4px rgba(255, 255, 255, 0.8),
+              0 6px 14px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  user-select: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.loto-ball:hover {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: inset -3px -4px 6px rgba(0, 0, 0, 0.5),
+              inset 2px 3px 4px rgba(255, 255, 255, 0.8),
+              0 10px 22px rgba(0, 0, 0, 0.6);
+}
+
+.loto-ball.sm {
+  width: 34px;
+  height: 34px;
+  font-size: 0.88rem;
+}
+
+.loto-ball.lg {
+  width: 48px;
+  height: 48px;
+  font-size: 1.25rem;
+}
+
+.loto-ball.trevo {
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.1) 28%),
+              radial-gradient(circle at 50% 50%, #f59e0b 0%, #b45309 100%);
+  color: #1e1b4b;
+  text-shadow: none;
+}
+
+/* Bilhete de Loteria Digital */
+.ticket-stub {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.ticket-stub::before, .ticket-stub::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--bg-dark);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.ticket-stub::before { left: -8px; }
+.ticket-stub::after { right: -8px; }
+
+/* Botões Modernos com área de toque de 44px */
+.btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Scroll com Inércia para Touch Devices (iOS/Android) */
+.lottery-tabs-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Media Queries Responsivas Globais */
+@media (max-width: 576px) {
+  .loto-ball {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
+  .loto-ball.sm {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+  .loto-ball.lg {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+  }
+  .ticket-stub {
+    padding: 12px;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(11, 15, 25, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
