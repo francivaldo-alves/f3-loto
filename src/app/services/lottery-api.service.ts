@@ -68,8 +68,15 @@ export class LotteryApiService {
     }
 
     const localCacheKey = `sortloto_latest_${type}`;
-    const localData = this.getFromLocalStorage<LotteryDraw>(localCacheKey);
+    const cached = this.getFromLocalStorageWithExpiry<LotteryDraw>(localCacheKey, 1 * 60 * 60 * 1000); // 1 hora de expiração
 
+    if (cached && !forceRefresh) {
+      const cachedObservable$ = of(cached).pipe(shareReplay(1));
+      this.latestCache.set(type, cachedObservable$ as Observable<LotteryDraw>);
+      return cachedObservable$;
+    }
+
+    const localData = this.getFromLocalStorage<LotteryDraw>(localCacheKey);
     const request$ = this.http.get<LotteryDraw>(`${this.baseUrl}/${type}/latest`).pipe(
       tap(draw => {
         if (draw) {
@@ -100,8 +107,15 @@ export class LotteryApiService {
     }
 
     const localCacheKey = `sortloto_history_${type}_${effectiveLimit}`;
-    const localData = this.getFromLocalStorage<LotteryDraw[]>(localCacheKey);
+    const cached = this.getFromLocalStorageWithExpiry<LotteryDraw[]>(localCacheKey, 4 * 60 * 60 * 1000); // 4 horas de expiração
 
+    if (cached && !forceRefresh) {
+      const cachedObservable$ = of(cached.slice(0, effectiveLimit)).pipe(shareReplay(1));
+      this.historyCache.set(cacheKey, cachedObservable$);
+      return cachedObservable$;
+    }
+
+    const localData = this.getFromLocalStorage<LotteryDraw[]>(localCacheKey);
     this.loading$.next(true);
     this.error$.next(null);
 
@@ -148,6 +162,20 @@ export class LotteryApiService {
       const item = localStorage.getItem(key);
       if (!item) return null;
       const parsed = JSON.parse(item);
+      return parsed.payload as T;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private getFromLocalStorageWithExpiry<T>(key: string, expiryMs: number): T | null {
+    try {
+      const item = localStorage.getItem(key);
+      if (!item) return null;
+      const parsed = JSON.parse(item);
+      if (Date.now() - parsed.timestamp > expiryMs) {
+        return null; // Expirou
+      }
       return parsed.payload as T;
     } catch (e) {
       return null;

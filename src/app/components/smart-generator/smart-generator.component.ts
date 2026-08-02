@@ -193,8 +193,25 @@ interface StrategyOption {
               <span class="q-val">{{ bet.quadrantDistribution }}</span>
             </div>
 
+            <!-- Volante Visual Interativo Expandido -->
+            <div class="volante-preview" *ngIf="activeVolanteBetId === bet.id">
+              <div class="volante-preview-title">Volante Digital ({{ config.name }}):</div>
+              <div class="volante-grid">
+                <div
+                  *ngFor="let num of getVolanteNumbers(); trackBy: trackByNum"
+                  class="volante-cell"
+                  [class.selected]="bet.numbers.includes(num)"
+                  [style.--v-color]="config.color">
+                  {{ num }}
+                </div>
+              </div>
+            </div>
+
             <!-- Rodapé do bilhete -->
             <div class="ticket-footer">
+              <button class="btn-volante" (click)="toggleVolante(bet.id)" [class.active]="activeVolanteBetId === bet.id">
+                {{ activeVolanteBetId === bet.id ? '✕ Ocultar Volante' : '🎴 Ver no Volante' }}
+              </button>
               <button class="btn-copy" (click)="copySingleBet(bet)" [class.copied]="copiedBetId === bet.id">
                 {{ copiedBetId === bet.id ? '✓ Copiado!' : '📋 Copiar Aposta' }}
               </button>
@@ -585,10 +602,84 @@ interface StrategyOption {
       color: #34d399;
     }
 
+    /* ── Volante Visual ── */
+    .btn-volante {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted);
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-volante:hover {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+    }
+    .btn-volante.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: #3b82f6;
+      color: #93c5fd;
+    }
+
+    .volante-preview {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0 10px 0;
+      animation: expandVolante 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes expandVolante {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .volante-preview-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-subtle);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .volante-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .volante-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-subtle);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 4px;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .volante-cell.selected {
+      background: var(--v-color, #10b981);
+      color: #000000;
+      border-color: transparent;
+      font-weight: 900;
+      box-shadow: 0 0 8px var(--v-color, rgba(16,185,129,0.5));
+    }
+
     @media (max-width: 576px) {
       .generator-container { padding: 14px; }
       .strategy-grid { grid-template-columns: 1fr 1fr; }
       .config-row { padding: 12px; }
+      .volante-grid { gap: 2px; }
+      .volante-cell { font-size: 0.62rem; }
     }
   `]
 })
@@ -615,6 +706,7 @@ export class SmartGeneratorComponent implements OnChanges {
   };
 
   copiedBetId: string | null = null;
+  activeVolanteBetId: string | null = null;
 
   readonly strategies: StrategyOption[] = [
     { id: 'specialist', icon: '🏆', label: 'Especialista',    desc: 'Moldura, primos e distribuição Gauss', color: '#10b981' },
@@ -636,6 +728,7 @@ export class SmartGeneratorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['config'] && this.config) {
       this.options.numbersPerBet = this.config.defaultBetCount;
+      this.activeVolanteBetId = null;
     }
   }
 
@@ -656,5 +749,18 @@ export class SmartGeneratorComponent implements OnChanges {
       this.copiedBetId = bet.id;
       setTimeout(() => { if (this.copiedBetId === bet.id) this.copiedBetId = null; }, 2000);
     });
+  }
+
+  toggleVolante(betId: string): void {
+    this.activeVolanteBetId = this.activeVolanteBetId === betId ? null : betId;
+  }
+
+  getVolanteNumbers(): string[] {
+    if (!this.config) return [];
+    const list: string[] = [];
+    for (let i = this.config.minNumber; i <= this.config.maxNumber; i++) {
+      list.push(String(i).padStart(this.config.numberPadding, '0'));
+    }
+    return list;
   }
 }

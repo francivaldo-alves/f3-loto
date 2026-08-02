@@ -6,6 +6,7 @@ import { FrequencyHeatmapComponent } from './components/frequency-heatmap/freque
 import { SmartGeneratorComponent } from './components/smart-generator/smart-generator.component';
 import { BetExporterComponent } from './components/bet-exporter/bet-exporter.component';
 import { RoiPanelComponent } from './components/roi-panel/roi-panel.component';
+import { BetCheckerComponent } from './components/bet-checker/bet-checker.component';
 import { LotteryApiService } from './services/lottery-api.service';
 import { StatsEngineService } from './services/stats-engine.service';
 import { CombinatorService } from './services/combinator.service';
@@ -29,7 +30,8 @@ import {
     FrequencyHeatmapComponent,
     SmartGeneratorComponent,
     BetExporterComponent,
-    RoiPanelComponent
+    RoiPanelComponent,
+    BetCheckerComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.component.html',
@@ -93,6 +95,19 @@ export class AppComponent implements OnInit {
       this.latestDrawsMap.set(type, draw);
       this.cdr.markForCheck();
     });
+  }
+
+  getLatestDraw(): LotteryDraw | null {
+    if (!this.selectedGameId) return null;
+    return this.latestDrawsMap.get(this.selectedGameId) || null;
+  }
+
+  formatCurrency(value: number): string {
+    if (!value) return 'R$ —';
+    if (value >= 1_000_000) {
+      return `R$ ${(value / 1_000_000).toFixed(value % 1_000_000 === 0 ? 0 : 1)} milhões`;
+    }
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
   }
 
   onGameSelected(gameId: LotteryType | null): void {

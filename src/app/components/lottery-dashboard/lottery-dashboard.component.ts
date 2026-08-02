@@ -72,15 +72,12 @@ import { LotteryConfig, LotteryDraw, LotteryType, LOTTERY_CONFIGS } from '../../
                 <ng-template #normalBalls>
                   <div class="balls-row">
                     <div
-                      *ngFor="let num of (draw.dezenas || []).slice(0, 8); trackBy: trackByBall"
+                      *ngFor="let num of (draw.dezenas || []); trackBy: trackByBall"
                       class="loto-ball sm"
                       [style.--ball-color]="config.color"
                       [style.--ball-dark-color]="config.secondaryColor">
                       {{ num }}
                     </div>
-                    <span *ngIf="(draw.dezenas.length || 0) > 8" class="more-balls">
-                      +{{ (draw.dezenas.length || 0) - 8 }}
-                    </span>
                   </div>
                 </ng-template>
 

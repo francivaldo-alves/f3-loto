@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap');
 
 :root {
-  --bg-dark: #0b0f19;
-  --bg-card: rgba(18, 26, 44, 0.75);
-  --bg-card-hover: rgba(28, 40, 64, 0.9);
+  --bg-dark: #070a13;
+  --bg-card: rgba(18, 26, 44, 0.65);
+  --bg-card-hover: rgba(28, 40, 64, 0.85);
   --border-card: rgba(255, 255, 255, 0.08);
-  --border-accent: rgba(255, 255, 255, 0.16);
+  --border-accent: rgba(255, 255, 255, 0.18);
   
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
@@ -36,95 +36,106 @@
 html, body {
   width: 100%;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: var(--font-main);
   background-color: var(--bg-dark);
   background-image: 
-    radial-gradient(ellipse at 15% 10%, rgba(32, 152, 105, 0.12) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 15%, rgba(147, 0, 137, 0.12) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 85%, rgba(38, 0, 133, 0.15) 0%, transparent 50%);
+    radial-gradient(circle at 10% 15%, rgba(16, 185, 129, 0.09) 0%, transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(217, 70, 239, 0.09) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 60%);
   background-attachment: fixed;
   color: var(--text-main);
   min-height: 100vh;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism Card com Efeito de Luz Natural */
+/* Glassmorphism Card com Efeito de Luz 3D Natural */
 .glass-panel {
-  background: linear-gradient(145deg, rgba(22, 32, 54, 0.75) 0%, rgba(14, 21, 37, 0.85) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-card);
+  background: linear-gradient(135deg, rgba(22, 32, 54, 0.65) 0%, rgba(14, 21, 37, 0.75) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-md);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.65);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-panel:hover {
-  border-color: var(--border-accent);
+  border-top-color: rgba(255, 255, 255, 0.2);
+  border-left-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.8);
 }
 
 /* Bola da Loteria 3D Realista e Responsiva */
 .loto-ball {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.1rem;
+  font-weight: 900;
+  font-size: 1.15rem;
   color: #ffffff;
   position: relative;
-  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.1) 28%),
-              radial-gradient(circle at 50% 50%, var(--ball-color, #209869) 0%, var(--ball-dark-color, #064e3b) 100%);
-  box-shadow: inset -3px -4px 6px rgba(0, 0, 0, 0.5),
-              inset 2px 3px 4px rgba(255, 255, 255, 0.8),
-              0 6px 14px rgba(0, 0, 0, 0.4);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  /* Camadas de iluminação esférica realista */
+  background: 
+    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 50% 50%, var(--ball-color, #209869) 0%, var(--ball-dark-color, #064e3b) 100%);
+  box-shadow: 
+    inset -4px -4px 7px rgba(0, 0, 0, 0.55),
+    inset 2px 3px 5px rgba(255, 255, 255, 0.85),
+    0 8px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
   user-select: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
 }
 
 .loto-ball:hover {
-  transform: translateY(-3px) scale(1.08);
-  box-shadow: inset -3px -4px 6px rgba(0, 0, 0, 0.5),
-              inset 2px 3px 4px rgba(255, 255, 255, 0.8),
-              0 10px 22px rgba(0, 0, 0, 0.6);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 
+    inset -4px -4px 7px rgba(0, 0, 0, 0.55),
+    inset 2px 3px 5px rgba(255, 255, 255, 0.85),
+    0 12px 28px rgba(0, 0, 0, 0.65);
 }
 
 .loto-ball.sm {
-  width: 34px;
-  height: 34px;
-  font-size: 0.88rem;
+  width: 35px;
+  height: 35px;
+  font-size: 0.9rem;
 }
 
 .loto-ball.lg {
-  width: 48px;
-  height: 48px;
-  font-size: 1.25rem;
+  width: 50px;
+  height: 50px;
+  font-size: 1.3rem;
 }
 
 .loto-ball.trevo {
-  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.1) 28%),
-              radial-gradient(circle at 50% 50%, #f59e0b 0%, #b45309 100%);
-  color: #1e1b4b;
-  text-shadow: none;
+  background: 
+    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 50% 50%, #f59e0b 0%, #b45309 100%);
+  color: #111827;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-/* Bilhete de Loteria Digital */
+/* Bilhete de Loteria Digital (Físico Estilizado) */
 .ticket-stub {
   background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
   border: 1px dashed rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-sm);
   padding: 16px;
   position: relative;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 .ticket-stub::before, .ticket-stub::after {
@@ -147,23 +158,23 @@ body {
   color: #ffffff;
   border: none;
   min-height: 44px;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border-radius: var(--radius-sm);
   font-family: var(--font-main);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.92rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
   background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
 }
 
@@ -172,9 +183,9 @@ body {
   color: #e2e8f0;
   border: 1px solid rgba(255, 255, 255, 0.12);
   min-height: 44px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
   display: inline-flex;
@@ -190,7 +201,7 @@ body {
   color: #ffffff;
 }
 
-/* Scroll com Inércia para Touch Devices (iOS/Android) */
+/* Scroll com Inércia para Touch Devices */
 .lottery-tabs-scroll {
   -webkit-overflow-scrolling: touch;
 }
@@ -198,37 +209,38 @@ body {
 /* Media Queries Responsivas Globais */
 @media (max-width: 576px) {
   .loto-ball {
-    width: 36px;
-    height: 36px;
-    font-size: 0.95rem;
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
   }
   .loto-ball.sm {
-    width: 30px;
-    height: 30px;
-    font-size: 0.8rem;
+    width: 31px;
+    height: 31px;
+    font-size: 0.82rem;
   }
   .loto-ball.lg {
-    width: 42px;
-    height: 42px;
-    font-size: 1.1rem;
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
   }
   .ticket-stub {
     padding: 12px;
   }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Mais fina e vidro */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(11, 15, 25, 0.8);
+  background: rgba(7, 10, 19, 0.9);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
 }

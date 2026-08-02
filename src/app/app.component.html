@@ -40,6 +40,51 @@
         </button>
       </div>
 
+      <!-- Painel do Último Sorteio Realizado (Detalhes) -->
+      <div class="latest-draw-detail-banner glass-panel" *ngIf="getLatestDraw() as draw">
+        <div class="detail-banner-header">
+          <div class="detail-banner-title">
+            <span class="detail-banner-icon">🎉</span>
+            Último Concurso Realizado: <strong>#{{ draw.concurso }}</strong> &bull; {{ draw.data }}
+          </div>
+          <div class="detail-banner-jackpot" *ngIf="draw.valorEstimadoProximoConcurso">
+            Estimado Próximo: <strong>{{ formatCurrency(draw.valorEstimadoProximoConcurso) }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-banner-body">
+          <!-- Federal (5 dígitos) -->
+          <div *ngIf="selectedConfig.numberPadding >= 5; else normalDetailBalls" class="federal-detail-row">
+            <div
+              *ngFor="let num of draw.dezenas"
+              class="federal-detail-chip"
+              [style.border-color]="selectedConfig.color"
+              [style.color]="selectedConfig.color">
+              {{ num }}
+            </div>
+          </div>
+
+          <!-- Bolas normais -->
+          <ng-template #normalDetailBalls>
+            <div class="detail-balls-row">
+              <div
+                *ngFor="let num of draw.dezenas"
+                class="loto-ball sm"
+                [style.--ball-color]="selectedConfig.color"
+                [style.--ball-dark-color]="selectedConfig.secondaryColor">
+                {{ num }}
+              </div>
+              
+              <!-- Trevos se houver (ex: +Milionaria) -->
+              <div *ngIf="draw.trevos && draw.trevos.length > 0" class="detail-trevos-wrap">
+                <span class="detail-trevos-label">Trevos:</span>
+                <div *ngFor="let t of draw.trevos" class="loto-ball sm trevo">{{ t }}</div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
       <!-- Mapa de Calor e Frequências das Dezenas -->
       <app-frequency-heatmap
         [config]="selectedConfig"
@@ -76,6 +121,12 @@
         [currentBetSize]="currentBetSize"
         [numberOfBets]="numberOfBets">
       </app-roi-panel>
+
+      <!-- Conferidor de Apostas (Validador Histórico) -->
+      <app-bet-checker
+        [config]="selectedConfig"
+        [history]="currentHistory">
+      </app-bet-checker>
 
       <!-- Modal de Exportação -->
       <app-bet-exporter

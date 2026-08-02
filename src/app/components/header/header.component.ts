@@ -151,6 +151,16 @@ import { LotteryConfig, LotteryType, LOTTERY_CONFIGS } from '../../models/lotter
       gap: 8px;
       min-width: max-content;
     }
+
+    @media (min-width: 768px) {
+      .lottery-tabs-scroll {
+        overflow-x: visible;
+      }
+      .tabs-wrapper {
+        flex-wrap: wrap;
+        min-width: 100%;
+      }
+    }
     .tab-btn {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
