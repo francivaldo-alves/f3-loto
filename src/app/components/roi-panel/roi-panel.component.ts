@@ -22,15 +22,18 @@ interface CostRow {
     <div class="roi-container glass-panel">
 
       <!-- ═══ CABEÇALHO ═══ -->
-      <div class="roi-header">
+      <div class="roi-header" (click)="toggleCollapse()" style="cursor: pointer; user-select: none;">
         <span class="roi-icon">📐</span>
         <div>
-          <h3 class="roi-title">Análise de Custo & Retorno</h3>
+          <h3 class="roi-title">
+            Análise de Custo & Retorno
+            <span class="btn-collapse-toggle">{{ isCollapsed ? '➕ expandir' : '➖ recolher' }}</span>
+          </h3>
           <p class="roi-subtitle">Entenda o valor real das suas apostas antes de jogar.</p>
         </div>
       </div>
 
-      <div class="roi-grid">
+      <div class="roi-grid" *ngIf="!isCollapsed">
 
         <!-- ─── SEÇÃO 1: Calculadora de Custo ─── -->
         <div class="roi-section">
@@ -123,7 +126,7 @@ interface CostRow {
         </div>
 
         <!-- ─── SEÇÃO 3: Pares Mais Frequentes ─── -->
-        <div class="roi-section pairs-section" *ngIf="topPairs.length > 0">
+        <div class="roi-section pairs-section" *ngIf="draws.length > 0 && topPairs.length > 0">
           <div class="section-head">
             <span class="section-icon">🔗</span>
             <h4 class="section-title">Pares que Mais Saem Juntos</h4>
@@ -169,6 +172,24 @@ interface CostRow {
       font-family: var(--font-display);
       font-size: 1.3rem;
       font-weight: 800;
+      color: #fff;
+    }
+    .btn-collapse-toggle {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 10px;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+    }
+    .roi-header:hover .btn-collapse-toggle {
+      background: rgba(255, 255, 255, 0.12);
       color: #fff;
     }
     .roi-subtitle { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
@@ -468,6 +489,8 @@ export class RoiPanelComponent implements OnChanges {
   @Input() currentBetSize = 6;
   @Input() numberOfBets = 5;
 
+  isCollapsed = true;
+
   costTable: CostRow[] = [];
   costPerBet = 0;
   totalCost = 0;
@@ -527,6 +550,10 @@ export class RoiPanelComponent implements OnChanges {
 
   getPairBarWidth(count: number): number {
     return (count / this.maxPairCount) * 100;
+  }
+
+  toggleCollapse(): void {
+    this.isCollapsed = !this.isCollapsed;
   }
 
   trackByCount(_: number, row: CostRow): number { return row.count; }

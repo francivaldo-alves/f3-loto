@@ -13,14 +13,17 @@ import { LotteryConfig, NumberFrequency } from '../../models/lottery.model';
 
       <!-- Header -->
       <div class="heatmap-header">
-        <div class="header-title-box">
-          <h3 class="title">📊 Mapa de Frequência</h3>
+        <div class="header-title-box" (click)="toggleCollapse()" style="cursor: pointer; user-select: none;">
+          <h3 class="title">
+            📊 Mapa de Frequência
+            <span class="btn-collapse-toggle">{{ isCollapsed ? '➕ expandir' : '➖ recolher' }}</span>
+          </h3>
           <p class="subtitle">
             <strong>{{ totalDraws }}</strong> sorteios analisados da {{ config.name }}
           </p>
         </div>
 
-        <div class="header-controls">
+        <div class="header-controls" *ngIf="!isCollapsed">
           <div class="sample-picker">
             <span class="sample-label">Período:</span>
             <select class="sample-select" [ngModel]="selectedLimit" (ngModelChange)="onLimitChange($event)">
@@ -33,107 +36,109 @@ import { LotteryConfig, NumberFrequency } from '../../models/lottery.model';
         </div>
       </div>
 
-      <!-- Cards de resumo compactos -->
-      <div class="stats-summary-grid">
-        <div class="stat-card hot-card">
-          <div class="stat-icon">🔥</div>
-          <div class="stat-content">
-            <span class="stat-label">Mais sorteadas</span>
-            <div class="stat-balls">
-              <span *ngFor="let item of topHot; trackBy: trackByFreq" class="mini-ball hot">
-                {{ item.number }}<em>{{ item.count }}x</em>
-              </span>
+      <ng-container *ngIf="!isCollapsed">
+        <!-- Cards de resumo compactos -->
+        <div class="stats-summary-grid">
+          <div class="stat-card hot-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-content">
+              <span class="stat-label">Mais sorteadas</span>
+              <div class="stat-balls">
+                <span *ngFor="let item of topHot; trackBy: trackByFreq" class="mini-ball hot">
+                  {{ item.number }}<em>{{ item.count }}x</em>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card trend-card">
+            <div class="stat-icon">⬆️</div>
+            <div class="stat-content">
+              <span class="stat-label">Em alta recente</span>
+              <div class="stat-balls">
+                <span *ngFor="let item of topTrending; trackBy: trackByFreq" class="mini-ball trend">
+                  {{ item.number }}<em>+{{ item.trendScore | number:'1.0-0' }}%</em>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card delayed-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-content">
+              <span class="stat-label">Mais atrasadas</span>
+              <div class="stat-balls">
+                <span *ngFor="let item of topDelayed; trackBy: trackByFreq" class="mini-ball delayed">
+                  {{ item.number }}<em>{{ item.delay }}c</em>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card ratio-card" *ngIf="evenOddStats">
+            <div class="stat-icon">⚖️</div>
+            <div class="stat-content">
+              <span class="stat-label">Par / Ímpar médio</span>
+              <div class="ratio-values">
+                <span class="ratio-chip even">{{ evenOddStats.avgEvens }} pares</span>
+                <span class="ratio-chip odd">{{ evenOddStats.avgOdds }} ímpares</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="stat-card trend-card">
-          <div class="stat-icon">⬆️</div>
-          <div class="stat-content">
-            <span class="stat-label">Em alta recente</span>
-            <div class="stat-balls">
-              <span *ngFor="let item of topTrending; trackBy: trackByFreq" class="mini-ball trend">
-                {{ item.number }}<em>+{{ item.trendScore | number:'1.0-0' }}%</em>
-              </span>
-            </div>
-          </div>
+        <!-- Instrução interativa -->
+        <div class="instruction-banner">
+          <span class="inst-icon">👆</span>
+          <span>Toque em uma dezena para <strong>fixá-la</strong> na aposta ou <strong>excluí-la</strong> do sorteio.</span>
         </div>
 
-        <div class="stat-card delayed-card">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-content">
-            <span class="stat-label">Mais atrasadas</span>
-            <div class="stat-balls">
-              <span *ngFor="let item of topDelayed; trackBy: trackByFreq" class="mini-ball delayed">
-                {{ item.number }}<em>{{ item.delay }}c</em>
-              </span>
-            </div>
-          </div>
+        <!-- Legenda das cores -->
+        <div class="legend-row">
+          <div class="legend-item"><span class="leg-dot hot"></span>Quente</div>
+          <div class="legend-item"><span class="leg-dot trend"></span>Em alta</div>
+          <div class="legend-item"><span class="leg-dot delayed"></span>Atrasada</div>
+          <div class="legend-item"><span class="leg-dot cold"></span>Fria</div>
+          <div class="legend-item"><span class="leg-dot normal"></span>Normal</div>
+          <div class="legend-item fixed-item"><span class="leg-pin">📌</span>Fixada</div>
+          <div class="legend-item excl-item"><span class="leg-pin">🚫</span>Excluída</div>
         </div>
 
-        <div class="stat-card ratio-card" *ngIf="evenOddStats">
-          <div class="stat-icon">⚖️</div>
-          <div class="stat-content">
-            <span class="stat-label">Par / Ímpar médio</span>
-            <div class="ratio-values">
-              <span class="ratio-chip even">{{ evenOddStats.avgEvens }} pares</span>
-              <span class="ratio-chip odd">{{ evenOddStats.avgOdds }} ímpares</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Instrução interativa -->
-      <div class="instruction-banner">
-        <span class="inst-icon">👆</span>
-        <span>Toque em uma dezena para <strong>fixá-la</strong> na aposta ou <strong>excluí-la</strong> do sorteio.</span>
-      </div>
-
-      <!-- Legenda das cores -->
-      <div class="legend-row">
-        <div class="legend-item"><span class="leg-dot hot"></span>Quente</div>
-        <div class="legend-item"><span class="leg-dot trend"></span>Em alta</div>
-        <div class="legend-item"><span class="leg-dot delayed"></span>Atrasada</div>
-        <div class="legend-item"><span class="leg-dot cold"></span>Fria</div>
-        <div class="legend-item"><span class="leg-dot normal"></span>Normal</div>
-        <div class="legend-item fixed-item"><span class="leg-pin">📌</span>Fixada</div>
-        <div class="legend-item excl-item"><span class="leg-pin">🚫</span>Excluída</div>
-      </div>
-
-      <!-- Grade de Dezenas -->
-      <div class="balls-matrix">
-        <div
-          *ngFor="let freq of frequencies; trackBy: trackByFreq"
-          class="matrix-cell"
-          [class.is-fixed]="isFixed(freq.number)"
-          [class.is-excluded]="isExcluded(freq.number)"
-          [title]="getCellTooltip(freq)"
-          (click)="onToggleNumber(freq.number)">
-
+        <!-- Grade de Dezenas -->
+        <div class="balls-matrix">
           <div
-            class="loto-ball"
-            [class.hot-glow]="freq.isHot && !freq.isTrending"
-            [class.trend-glow]="freq.isTrending"
-            [class.cold-style]="freq.isCold && !freq.isHot && !freq.isTrending"
-            [class.delayed-style]="freq.isDelayed && !freq.isHot && !freq.isTrending"
-            [style.--ball-color]="getBallColor(freq)"
-            [style.--ball-dark-color]="config.secondaryColor">
-            {{ freq.number }}
+            *ngFor="let freq of frequencies; trackBy: trackByFreq"
+            class="matrix-cell"
+            [class.is-fixed]="isFixed(freq.number)"
+            [class.is-excluded]="isExcluded(freq.number)"
+            [title]="getCellTooltip(freq)"
+            (click)="onToggleNumber(freq.number)">
+
+            <div
+              class="loto-ball"
+              [class.hot-glow]="freq.isHot && !freq.isTrending"
+              [class.trend-glow]="freq.isTrending"
+              [class.cold-style]="freq.isCold && !freq.isHot && !freq.isTrending"
+              [class.delayed-style]="freq.isDelayed && !freq.isHot && !freq.isTrending"
+              [style.--ball-color]="getBallColor(freq)"
+              [style.--ball-dark-color]="config.secondaryColor">
+              {{ freq.number }}
+            </div>
+
+            <!-- Mini badge de tendência -->
+            <div class="trend-badge" *ngIf="freq.isTrending && !isFixed(freq.number) && !isExcluded(freq.number)">⬆</div>
+
+            <div class="cell-stats">
+              <span class="count-txt">{{ freq.count }}×</span>
+              <span class="delay-txt" [class.high-delay]="freq.delay > 10">{{ freq.delay }}c</span>
+            </div>
+
+            <!-- Overlay de fixada/excluída -->
+            <div class="badge-overlay" *ngIf="isFixed(freq.number)">📌 FIXA</div>
+            <div class="badge-overlay excluded" *ngIf="isExcluded(freq.number)">🚫</div>
           </div>
-
-          <!-- Mini badge de tendência -->
-          <div class="trend-badge" *ngIf="freq.isTrending && !isFixed(freq.number) && !isExcluded(freq.number)">⬆</div>
-
-          <div class="cell-stats">
-            <span class="count-txt">{{ freq.count }}×</span>
-            <span class="delay-txt" [class.high-delay]="freq.delay > 10">{{ freq.delay }}c</span>
-          </div>
-
-          <!-- Overlay de fixada/excluída -->
-          <div class="badge-overlay" *ngIf="isFixed(freq.number)">📌 FIXA</div>
-          <div class="badge-overlay excluded" *ngIf="isExcluded(freq.number)">🚫</div>
         </div>
-      </div>
+      </ng-container>
 
     </div>
   `,
@@ -158,6 +163,24 @@ import { LotteryConfig, NumberFrequency } from '../../models/lottery.model';
       font-size: 1.3rem;
       font-weight: 800;
       color: #ffffff;
+    }
+    .btn-collapse-toggle {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 10px;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+    }
+    .header-title-box:hover .btn-collapse-toggle {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
     }
     .subtitle {
       font-size: 0.83rem;
@@ -410,6 +433,8 @@ export class FrequencyHeatmapComponent implements OnChanges {
   @Input() evenOddStats: any = null;
   @Input() selectedLimit = 200;
 
+  isCollapsed = false;
+
   @Output() limitChange = new EventEmitter<number>();
   @Output() toggleFixed = new EventEmitter<string>();
   @Output() toggleExcluded = new EventEmitter<string>();
@@ -484,5 +509,9 @@ export class FrequencyHeatmapComponent implements OnChanges {
       // Normal → fixada
       this.toggleFixed.emit(num);
     }
+  }
+
+  toggleCollapse(): void {
+    this.isCollapsed = !this.isCollapsed;
   }
 }

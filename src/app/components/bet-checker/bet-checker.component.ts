@@ -20,15 +20,18 @@ interface CheckResult {
     <div class="checker-container glass-panel">
 
       <!-- Cabeçalho -->
-      <div class="checker-header">
+      <div class="checker-header" (click)="toggleCollapse()" style="cursor: pointer; user-select: none;">
         <span class="chk-icon">🔍</span>
         <div>
-          <h3 class="chk-title">Conferidor de Apostas</h3>
+          <h3 class="chk-title">
+            Conferidor de Apostas
+            <span class="btn-collapse-toggle">{{ isCollapsed ? '➕ expandir' : '➖ recolher' }}</span>
+          </h3>
           <p class="chk-subtitle">Teste seus números contra o histórico real de sorteios da <strong>{{ config.name }}</strong>.</p>
         </div>
       </div>
 
-      <div class="checker-grid">
+      <div class="checker-grid" *ngIf="!isCollapsed">
 
         <!-- Seleção de números -->
         <div class="selector-side">
@@ -172,6 +175,24 @@ interface CheckResult {
       font-size: 1.3rem;
       font-weight: 800;
       color: #ffffff;
+    }
+    .btn-collapse-toggle {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 10px;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+    }
+    .checker-header:hover .btn-collapse-toggle {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
     }
     .chk-subtitle { font-size: 0.83rem; color: var(--text-muted); margin-top: 3px; }
 
@@ -493,6 +514,8 @@ export class BetCheckerComponent implements OnChanges {
   @Input() config!: LotteryConfig;
   @Input() history: LotteryDraw[] = [];
 
+  isCollapsed = true;
+
   volanteNumbers: string[] = [];
   selectedNumbers: string[] = [];
 
@@ -680,4 +703,8 @@ export class BetCheckerComponent implements OnChanges {
   trackByNum(index: number, num: string): string { return num; }
   trackByPrizeRow(index: number, row: any): number { return row.hits; }
   trackByConcurso(index: number, item: CheckResult): number { return item.concurso; }
+
+  toggleCollapse(): void {
+    this.isCollapsed = !this.isCollapsed;
+  }
 }
