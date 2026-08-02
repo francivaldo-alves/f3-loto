@@ -67,6 +67,16 @@
         (removeExcluded)="onRemoveExcluded($event)">
       </app-smart-generator>
 
+      <!-- Painel de ROI e Co-ocorrência -->
+      <app-roi-panel
+        [config]="selectedConfig"
+        [draws]="currentHistory"
+        [frequencies]="frequencies"
+        [bets]="generatedBets"
+        [currentBetSize]="currentBetSize"
+        [numberOfBets]="numberOfBets">
+      </app-roi-panel>
+
       <!-- Modal de Exportação -->
       <app-bet-exporter
         *ngIf="showExportModal"

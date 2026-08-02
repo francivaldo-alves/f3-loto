@@ -30,6 +30,12 @@ export interface LotteryConfig {
   hasColumns?: boolean;
   totalColumns?: number;
   description: string;
+  /** Preço base em R$ da aposta mínima */
+  basePrice: number;
+  /** % do valor arrecadado que retorna em prêmios (ex: 43 = 43%) */
+  returnRate: number;
+  /** Mínimo de acertos para ganhar qualquer prêmio */
+  minHitsForPrize: number;
 }
 
 export interface LotteryPrizeTier {
@@ -73,16 +79,35 @@ export interface NumberFrequency {
   count: number;
   percentage: number;
   delay: number;
+  /** Frequência apenas na janela recente (padrão: últimos 30 sorteios) */
+  recentCount: number;
+  recentPercentage: number;
+  /**
+   * Tendência: positivo = número em alta recente vs. média histórica.
+   * Calculado como: (recentPercentage - percentage) / percentage * 100
+   */
+  trendScore: number;
   isHot: boolean;
   isCold: boolean;
   isDelayed: boolean;
+  /** Número em fase ascendente de frequência */
+  isTrending: boolean;
   isPrime?: boolean;
   isFrame?: boolean;
   lastConcurso: number | null;
 }
 
+/** Par de dezenas e sua frequência de co-ocorrência */
+export interface PairFrequency {
+  a: string;
+  b: string;
+  count: number;
+  percentage: number;
+}
+
 export interface GeneratorOptions {
-  strategy: 'specialist' | 'weighted' | 'closure' | 'hot' | 'balanced' | 'custom';
+  /** trend = dezenas em ascensão nos últimos sorteios */
+  strategy: 'specialist' | 'weighted' | 'closure' | 'hot' | 'balanced' | 'custom' | 'trend';
   numbersPerBet: number;
   numberOfBets: number;
   fixedNumbers: string[];
@@ -95,7 +120,7 @@ export interface GeneratedBet {
   id: string;
   numbers: string[];
   trevos?: string[];
-  strategy: 'specialist' | 'weighted' | 'closure' | 'hot' | 'balanced' | 'custom';
+  strategy: 'specialist' | 'weighted' | 'closure' | 'hot' | 'balanced' | 'custom' | 'trend';
   hotRate: number;
   evenCount: number;
   oddCount: number;
@@ -131,7 +156,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     numberPadding: 2,
     hasTrevos: true,
     maxTrevos: 6,
-    description: 'Escolha 6 números (1-50) e 2 trevos (1-6).'
+    description: 'Escolha 6 números (1-50) e 2 trevos (1-6).',
+    basePrice: 6.00,
+    returnRate: 45,
+    minHitsForPrize: 2
   },
   megasena: {
     id: 'megasena',
@@ -146,7 +174,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     defaultBetCount: 6,
     allowedBetCounts: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
     numberPadding: 2,
-    description: 'O prêmio principal de 6 acertos (Sena).'
+    description: 'O prêmio principal de 6 acertos (Sena).',
+    basePrice: 5.00,
+    returnRate: 43,
+    minHitsForPrize: 4
   },
   lotofacil: {
     id: 'lotofacil',
@@ -161,7 +192,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     defaultBetCount: 15,
     allowedBetCounts: [15, 16, 17, 18, 19, 20],
     numberPadding: 2,
-    description: 'Escolha de 15 a 20 números dos 25 disponíveis.'
+    description: 'Escolha de 15 a 20 números dos 25 disponíveis.',
+    basePrice: 3.00,
+    returnRate: 71,
+    minHitsForPrize: 11
   },
   quina: {
     id: 'quina',
@@ -176,7 +210,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     defaultBetCount: 5,
     allowedBetCounts: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
     numberPadding: 2,
-    description: 'Acerte 2, 3, 4 ou 5 números entre 80 disponíveis.'
+    description: 'Acerte 2, 3, 4 ou 5 números entre 80 disponíveis.',
+    basePrice: 2.50,
+    returnRate: 64,
+    minHitsForPrize: 2
   },
   lotomania: {
     id: 'lotomania',
@@ -191,7 +228,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     defaultBetCount: 50,
     allowedBetCounts: [50],
     numberPadding: 2,
-    description: 'Escolha 50 números de 00 a 99.'
+    description: 'Escolha 50 números de 00 a 99.',
+    basePrice: 3.00,
+    returnRate: 55,
+    minHitsForPrize: 15
   },
   timemania: {
     id: 'timemania',
@@ -207,7 +247,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     allowedBetCounts: [10],
     numberPadding: 2,
     hasSpecialTeam: true,
-    description: 'Escolha 10 números de 80 e o seu Time do Coração.'
+    description: 'Escolha 10 números de 80 e o seu Time do Coração.',
+    basePrice: 3.50,
+    returnRate: 46,
+    minHitsForPrize: 3
   },
   duplasena: {
     id: 'duplasena',
@@ -222,7 +265,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     defaultBetCount: 6,
     allowedBetCounts: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
     numberPadding: 2,
-    description: 'Com o mesmo bilhete você concorre em 2 sorteios por concurso.'
+    description: 'Com o mesmo bilhete você concorre em 2 sorteios por concurso.',
+    basePrice: 2.50,
+    returnRate: 50,
+    minHitsForPrize: 3
   },
   federal: {
     id: 'federal',
@@ -237,7 +283,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     defaultBetCount: 5,
     allowedBetCounts: [5],
     numberPadding: 5,
-    description: 'Cinco bilhetes premiados em cada extração.'
+    description: 'Cinco bilhetes premiados em cada extração.',
+    basePrice: 6.00,
+    returnRate: 72,
+    minHitsForPrize: 5
   },
   diadesorte: {
     id: 'diadesorte',
@@ -253,7 +302,10 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     allowedBetCounts: [7, 8, 9, 10, 11, 12, 13, 14, 15],
     numberPadding: 2,
     hasMonth: true,
-    description: 'Escolha de 7 a 15 números (1-31) e um Mês de Sorte.'
+    description: 'Escolha de 7 a 15 números (1-31) e um Mês de Sorte.',
+    basePrice: 2.50,
+    returnRate: 64,
+    minHitsForPrize: 4
   },
   supersete: {
     id: 'supersete',
@@ -270,6 +322,9 @@ export const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     numberPadding: 1,
     hasColumns: true,
     totalColumns: 7,
-    description: '7 colunas com números de 0 a 9 em cada uma.'
+    description: '7 colunas com números de 0 a 9 em cada uma.',
+    basePrice: 2.50,
+    returnRate: 40,
+    minHitsForPrize: 3
   }
 };
